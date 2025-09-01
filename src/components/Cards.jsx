@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Trash2, Pencil } from "lucide-react";
 import Modal from "./Modal";
 
 function Cards({ tasks, onToggleDone, onDeleteTask, onEditTask }) {
-  const [editingIndex, setEditingIndex] = React.useState(null);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [deletingIndex, setDeletingIndex] = useState(null);
 
   if (!tasks || tasks.length === 0) {
     return <p className="text-center text-gray-500">No tasks yet. Add one!</p>;
@@ -68,7 +69,7 @@ function Cards({ tasks, onToggleDone, onDeleteTask, onEditTask }) {
                     {/* Delete button */}
                     <button
                       className="btn btn-circle btn-sm hover:bg-red-500"
-                      onClick={() => onDeleteTask(index)}
+                      onClick={() => setDeletingIndex(index)}
                     >
                       <Trash2 size={14} />
                     </button>
@@ -82,6 +83,7 @@ function Cards({ tasks, onToggleDone, onDeleteTask, onEditTask }) {
 
       {/* Reusable modal */}
       <Modal
+        titleHead="Edit Task"
         id="modal-edit"
         taskTitle={editingIndex !== null ? tasks[editingIndex]?.title : ""}
         description={editingIndex !== null ? tasks[editingIndex]?.description : ""}
@@ -96,6 +98,40 @@ function Cards({ tasks, onToggleDone, onDeleteTask, onEditTask }) {
         }}
         onClose={closeEditModal}
       />
+
+      {/* Delete Confirmation Modal */}
+      {deletingIndex !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="p-6 shadow-lg bg-primary rounded-2xl w-80">
+            <h2 className="text-lg font-semibold text-white">
+              Are you sure?
+            </h2>
+            <p className="mt-2 text-sm text-white">
+              This action cannot be undone. Do you really want to delete this task?
+            </p>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                className="btn btn-sm"
+                onClick={() => setDeletingIndex(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="text-white bg-red-500 btn btn-sm hover:bg-red-600"
+                onClick={() => {
+                  onDeleteTask(deletingIndex);
+                  setDeletingIndex(null);
+                }}
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 }

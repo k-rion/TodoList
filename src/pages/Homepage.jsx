@@ -18,15 +18,17 @@ function Homepage() {
       }, [tasks]);
 
   return (
-    <div className='flex flex-col justify-center w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8'>
+    <div className="flex flex-col justify-center w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+
 
       {/* Navbar Component */}
       <Navbar/>
 
       {/* Welcome Message */}
-      <h1 className="my-10 text-2xl font-bold text-center sm:text-3xl lg:text-4xl text-primary animate-bounce">Welcome To Task App!</h1>
-      <h2 className="mb-3 ml-1 text-xl font-bold sm:text-2xl lg:text-3xl">Today's Task</h2>
-      <p className="mb-10 ml-1 text-sm text-white sm:text-base lg:text-lg">Stay organized and productive</p>
+        <h1 className="my-10 text-2xl font-bold text-center sm:text-3xl lg:text-4xl text-primary animate-bounce">Welcome To Task App!</h1>
+            
+        <h2 className="mb-3 ml-1 text-xl font-bold sm:text-2xl lg:text-3xl">Today's Task</h2>
+        <p className="mb-10 ml-1 text-sm sm:text-base lg:text-lg text-slate-500">Stay organized and productive</p>
 
       {/* Cards Component */}
       <Cards
@@ -46,19 +48,20 @@ function Homepage() {
           }}
         />
 
-      {/* Open Create New Task */}
-      <div className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 lg:bottom-12 lg:right-12">
+      {/* Open Create New Task*/}
+      <div className="fixed flex justify-end bottom-6 right-6 sm:bottom-10 sm:right-10">
         <button
+          className="transition-all duration-300 btn btn-outline btn-circle size-14 sm:size-16 hover:bg-primary hover:border-primary"
           onClick={() => document.getElementById("modal-task").showModal()}
-          className="transition-transform shadow-lg btn btn-primary btn-circle size-12 sm:size-14 lg:size-16 hover:scale-105"
         >
-          <Plus size={24} className="text-white" />
+          <Plus className="text-white" size={24} />
         </button>
       </div>
 
 
        {/* Reusable modals */}
       <Modal
+        titleHead= "Add New Task"
         id="modal-task"
         taskTitle=""
         description=""

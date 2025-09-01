@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {ChevronDown} from 'lucide-react'
 
-function Modal({ id, taskTitle, description, date, time, category, onSubmit, onClose }) {
+function Modal({ titleHead, id, taskTitle, description, date, time, category, onSubmit, onClose }) {
 
   const [formTaskTitle, setFormTaskTitle] = useState(taskTitle || "");
   const [formDescription, setFormDescription] = useState(description || "");
@@ -28,7 +28,7 @@ function Modal({ id, taskTitle, description, date, time, category, onSubmit, onC
   return (
     <dialog id={id} className="modal" aria-labelledby={`${id}-title`}>
       <div className="modal-box">
-      <h2 id={`${id}-title`} className="text-lg font-bold text-white">{taskTitle}</h2>
+        <h2 className="text-2xl font-bold text-center ">{titleHead}</h2>
         <form
           className="flex flex-col w-full gap-4 my-4"
           onSubmit={(e) => {
