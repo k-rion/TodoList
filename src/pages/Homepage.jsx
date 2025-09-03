@@ -1,12 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Plus } from 'lucide-react'
+import toast, { Toaster } from 'react-hot-toast';
 
 import Navbar from '../components/Navbar'
 import Cards from '../components/Cards'
 import Modal from '../components/Modal'
 
 function Homepage() {
+
 
     const [tasks, setTasks] = React.useState(() => {
       const saved = localStorage.getItem("tasks");
@@ -23,6 +25,9 @@ function Homepage() {
 
       {/* Navbar Component */}
       <Navbar/>
+
+            {/* Toaster - needed for react-hot-toast */}
+      <Toaster position="top-center" reverseOrder={false} />
 
       {/* Welcome Message */}
         <h1 className="my-10 text-2xl font-bold text-center sm:text-3xl lg:text-4xl text-primary animate-bounce">Welcome To Task App!</h1>
@@ -70,6 +75,7 @@ function Homepage() {
         category=""
         onSubmit={(newTask) => {
           setTasks((prev) => [...prev, {...newTask, done :  false}]);
+            toast.success('Successfully Create Task 🎉')
         }}
         onClose={() => document.getElementById("modal-task").close()}
       />
