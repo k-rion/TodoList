@@ -1,87 +1,160 @@
-import React, { useState } from "react";
-import { Trash2, Pencil } from "lucide-react";
-import Modal from "./Modal";
+import React, { useState } from "react"
+import { Trash2, Pencil, Calendar, Clock, Tag, CheckCircle, Circle, MoreVertical } from "lucide-react"
+import Modal from "./Modal"
 
 function Cards({ tasks, onToggleDone, onDeleteTask, onEditTask }) {
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [deletingIndex, setDeletingIndex] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null)
+  const [deletingIndex, setDeletingIndex] = useState(null)
+  const [menuOpen, setMenuOpen] = useState(null)
 
   if (!tasks || tasks.length === 0) {
-    return <p className="text-center text-gray-500">No tasks yet. Add one!</p>;
+    return (
+      <div className="py-16 text-center">
+        <div className="max-w-md mx-auto">
+          <div className="flex items-center justify-center w-24 h-24 mx-auto mb-4 border border-blue-100 rounded-full bg-white/80 backdrop-blur-sm">
+            <Calendar className="text-blue-400" size={32} />
+          </div>
+          <h3 className="mb-2 text-xl font-semibold text-gray-700">No tasks yet</h3>
+          <p className="text-gray-500">Create your first task to get started!</p>
+        </div>
+      </div>
+    )
   }
 
   const openEditModal = (index) => {
-    setEditingIndex(index);
-    document.getElementById("modal-edit").showModal();
-  };
+    setEditingIndex(index)
+    setMenuOpen(null)
+    document.getElementById("modal-edit").showModal()
+  }
 
   const closeEditModal = () => {
-    setEditingIndex(null);
-    document.getElementById("modal-edit").close();
-  };
+    setEditingIndex(null)
+    document.getElementById("modal-edit").close()
+  }
+
+  const getCategoryColor = (category) => {
+    const colors = {
+      "💼 Work": "bg-blue-100 text-blue-700 border-blue-200",
+      "🏠 Personal": "bg-green-100 text-green-700 border-green-200",
+      "📚 Study": "bg-purple-100 text-purple-700 border-purple-200",
+      "❤️‍🩹 Health": "bg-red-100 text-red-700 border-red-200"
+    }
+    return colors[category] || "bg-gray-100 text-gray-700 border-gray-200"
+  }
+
+  const getCategoryIcon = (category) => {
+    const icons = {
+      "💼 Work": "💼",
+      "🏠 Personal": "🏠",
+      "📚 Study": "📚",
+      "❤️‍🩹 Health": "❤️"
+    }
+    return icons[category] || "📝"
+  }
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="grid gap-4">
       {tasks.map((task, index) => {
-        const isDone = task.done;
+        const isDone = task.done
+        const categoryColor = getCategoryColor(task.category)
+        const categoryIcon = getCategoryIcon(task.category)
 
         return (
           <div
-            key={index}
-            className="w-full sm:w-[90%] lg:w-[75%] transition-all duration-300 cursor-pointer card bg-primary text-primary-content hover:-translate-y-2"
+            key={task.id || index}
+            className={`group bg-white/80 backdrop-blur-sm border rounded-2xl transition-all duration-300 hover:shadow-lg ${
+              isDone ? "border-green-200 opacity-75" : "border-gray-200 hover:border-blue-200"
+            }`}
           >
-            <div className={isDone ? "line-through text-gray-300" : ""}>
-              <div className="p-4 sm:p-6 card-body">
-                
-                {/* Title + checkbox */}
-                <h2 className="card-title">
-                  <label className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      className="w-5 h-5 checkbox border-cyan-100"
-                      checked={isDone}
-                      onChange={() => onToggleDone(index)}
-                    />
-                    <span>{task.title}</span>
-                  </label>
-                </h2>
+            <div className="p-6">
+              <div className="flex items-start justify-between">
+                {/* Checkbox and Content */}
+                <div className="flex items-start flex-1 min-w-0 gap-4">
+                  <button
+                    onClick={() => onToggleDone(index)}
+                    className={`flex-shrink-0 w-6 h-6 rounded-full border-2 transition-all duration-200 mt-1 ${
+                      isDone 
+                        ? "bg-green-500 border-green-500" 
+                        : "border-gray-300 hover:border-green-500 group-hover:border-green-400"
+                    } flex items-center justify-center`}
+                  >
+                    {isDone && <CheckCircle size={14} className="text-white" />}
+                  </button>
+                  
+                  <div className="flex-1 min-w-0">
+                    <h3 className={`text-lg font-semibold mb-2 ${
+                      isDone ? "line-through text-gray-400" : "text-gray-900"
+                    }`}>
+                      {task.title}
+                    </h3>
+                    
+                    {task.description && (
+                      <p className={`text-gray-600 mb-3 ${
+                        isDone ? "line-through" : ""
+                      }`}>
+                        {task.description}
+                      </p>
+                    )}
 
-                <p className="text-sm sm:text-base">{task.description}</p>
-
-                {/* Footer */}
-                <div className="flex items-center justify-between mt-4">
-                  <p className="font-mono text-xs sm:text-sm">
-                    📅 {task.date}, {task.time} <span className="font-extrabold">|</span> {task.category}
-                  </p>
-
-                  <div className="flex gap-2">
-                    {/* Edit button */}
-                    <button
-                      className={`btn btn-circle btn-sm ${
-                        isDone ? "btn-disabled opacity-50 cursor-not-allowed" : ""
-                      }`}
-                      disabled={isDone}
-                      onClick={() => !isDone && openEditModal(index)}
-                    >
-                      <Pencil size={14} />
-                    </button>
-
-                    {/* Delete button */}
-                    <button
-                      className="btn btn-circle btn-sm hover:bg-red-500"
-                      onClick={() => setDeletingIndex(index)}
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                    {/* Task Meta */}
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <Calendar size={14} />
+                        <span>{task.date}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Clock size={14} />
+                        <span>{task.time}</span>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full border ${categoryColor} flex items-center gap-1`}>
+                        <span>{categoryIcon}</span>
+                        {task.category.replace(/[^a-zA-Z]/g, '')}
+                      </span>
+                    </div>
                   </div>
+                </div>
+
+                {/* Action Menu */}
+                <div className="relative flex-shrink-0">
+                  <button
+                    className="p-2 transition-colors duration-200 rounded-lg hover:bg-gray-100"
+                    onClick={() => setMenuOpen(menuOpen === index ? null : index)}
+                  >
+                    <MoreVertical size={16} className="text-gray-400" />
+                  </button>
+
+                  {menuOpen === index && (
+                    <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-10 min-w-[120px]">
+                      <button
+                        className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors duration-200 ${
+                          isDone ? "text-gray-400 cursor-not-allowed" : "text-gray-700"
+                        }`}
+                        disabled={isDone}
+                        onClick={() => openEditModal(index)}
+                      >
+                        <Pencil size={14} className="inline mr-2" />
+                        Edit
+                      </button>
+                      <button
+                        className="w-full px-4 py-2 text-sm text-left text-red-600 transition-colors duration-200 hover:bg-red-50"
+                        onClick={() => {
+                          setDeletingIndex(index)
+                          setMenuOpen(null)
+                        }}
+                      >
+                        <Trash2 size={14} className="inline mr-2" />
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-        );
+        )
       })}
 
-      {/* Reusable modal */}
+      {/* Edit Modal */}
       <Modal
         titleHead="Edit Task"
         id="modal-edit"
@@ -92,8 +165,8 @@ function Cards({ tasks, onToggleDone, onDeleteTask, onEditTask }) {
         category={editingIndex !== null ? tasks[editingIndex]?.category : ""}
         onSubmit={(updatedTask) => {
           if (editingIndex !== null) {
-            onEditTask(editingIndex, updatedTask);
-            setEditingIndex(null);
+            onEditTask(editingIndex, updatedTask)
+            setEditingIndex(null)
           }
         }}
         onClose={closeEditModal}
@@ -101,39 +174,42 @@ function Cards({ tasks, onToggleDone, onDeleteTask, onEditTask }) {
 
       {/* Delete Confirmation Modal */}
       {deletingIndex !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="p-6 shadow-lg bg-primary rounded-2xl w-80">
-            <h2 className="text-lg font-semibold text-white">
-              Are you sure?
-            </h2>
-            <p className="mt-2 text-sm text-white">
-              This action cannot be undone. Do you really want to delete this task?
-            </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-md p-6 bg-white border border-gray-200 shadow-xl rounded-2xl">
+            <div className="mb-4 text-center">
+              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-3 bg-red-100 rounded-full">
+                <Trash2 className="text-red-500" size={24} />
+              </div>
+              <h2 className="mb-2 text-xl font-bold text-gray-900">
+                Delete Task?
+              </h2>
+              <p className="text-sm text-gray-600">
+                This action cannot be undone. The task will be permanently deleted.
+              </p>
+            </div>
 
-            <div className="flex justify-end gap-3 mt-6">
+            <div className="flex gap-3">
               <button
-                className="btn btn-sm"
+                className="flex-1 px-4 py-3 font-medium text-gray-700 transition-colors duration-200 bg-gray-100 hover:bg-gray-200 rounded-xl"
                 onClick={() => setDeletingIndex(null)}
               >
                 Cancel
               </button>
               <button
-                className="text-white bg-red-500 btn btn-sm hover:bg-red-600"
+                className="flex-1 px-4 py-3 font-medium text-white transition-all duration-200 bg-red-500 hover:bg-red-600 rounded-xl"
                 onClick={() => {
-                  onDeleteTask(deletingIndex);
-                  setDeletingIndex(null);
+                  onDeleteTask(deletingIndex)
+                  setDeletingIndex(null)
                 }}
               >
-                Yes, Delete
+                Delete
               </button>
             </div>
           </div>
         </div>
       )}
-
-
     </div>
-  );
+  )
 }
 
-export default Cards;
+export default Cards
